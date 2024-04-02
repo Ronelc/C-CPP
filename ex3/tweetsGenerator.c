@@ -17,7 +17,7 @@ typedef struct WordStruct {
     char *word;
     struct WordProbability *prob_list;
     int num_of_word_in_txt;
-    int size_of_prob;
+    int size_of_prob_lst;
 } WordStruct;
 
 /**
@@ -125,7 +125,7 @@ WordStruct *get_next_random_word (WordStruct *word_struct_ptr) {
   }
   int i = 0;
   while (i < arr_size) {
-    for (int j = 0; j < word_struct_ptr->size_of_prob; j++) {
+    for (int j = 0; j < word_struct_ptr->size_of_prob_lst; j++) {
       int num = word_struct_ptr->prob_list[j].num_of_next_word;
       for (int k = 0; k < num; k++) {
         arr[i] = word_struct_ptr->prob_list[j].word_struct_ptr;
@@ -189,14 +189,14 @@ int add_word_to_probability_list (WordStruct *first_word,
     if (first_word->prob_list == NULL) {
       exit (EXIT_FAILURE);
     }
-    first_word->size_of_prob = 1;
+    first_word->size_of_prob_lst = 1;
     first_word->prob_list->word_struct_ptr = second_word;
     first_word->prob_list->num_of_next_word = 1;
     first_word->prob_list->probability = probability (first_word, 1);
     return 1;
   }
   else {
-    for (int i = 0; i < first_word->size_of_prob; ++i) {
+    for (int i = 0; i < first_word->size_of_prob_lst; ++i) {
       if (strcmp (first_word->prob_list[i].word_struct_ptr->word,
                   second_word->word) == 0) {
         first_word->prob_list[i].num_of_next_word++;
@@ -207,18 +207,18 @@ int add_word_to_probability_list (WordStruct *first_word,
       }
     }
     void *new_ptr = realloc (first_word->prob_list,
-                             (first_word->size_of_prob + 1)
+                             (first_word->size_of_prob_lst + 1)
                              * sizeof (WordProbability));
     if (new_ptr == NULL) {
       exit (EXIT_FAILURE);
     }
     first_word->prob_list = new_ptr;
-    first_word->prob_list[first_word->size_of_prob].word_struct_ptr =
+    first_word->prob_list[first_word->size_of_prob_lst].word_struct_ptr =
         second_word;
-    first_word->prob_list[first_word->size_of_prob].num_of_next_word = 1;
-    first_word->prob_list[first_word->size_of_prob].probability =
+    first_word->prob_list[first_word->size_of_prob_lst].num_of_next_word = 1;
+    first_word->prob_list[first_word->size_of_prob_lst].probability =
         probability (first_word, 1);
-    first_word->size_of_prob++;
+    first_word->size_of_prob_lst++;
     return 1;
   }
 }
@@ -244,7 +244,7 @@ fill_dictionary_helper (LinkList *dictionary, char *word,
       exit (EXIT_FAILURE);
     }
     new_word->prob_list = NULL;
-    new_word->size_of_prob = 0;
+    new_word->size_of_prob_lst = 0;
     strcpy (new_word->word, word);
     new_word->num_of_word_in_txt = 1;
     if (add (dictionary, new_word) != 0) {
